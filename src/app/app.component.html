@@ -8,9 +8,34 @@
         <div class="text-input-section">
       <textarea
               [(ngModel)]="text"
+              (input)="analyzeText()"
               placeholder="Введіть або вставте текст для аналізу..."
               class="text-input">
       </textarea>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{wordCount}}</div>
+                    <div class="stat-label">Слова</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">{{charCount}}</div>
+                    <div class="stat-label">Символи</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">{{charCountNoSpaces}}</div>
+                    <div class="stat-label">Без пробілів</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">{{sentenceCount}}</div>
+                    <div class="stat-label">Речення</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
