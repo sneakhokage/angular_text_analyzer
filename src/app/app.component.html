@@ -12,6 +12,7 @@
               placeholder="Введіть або вставте текст для аналізу..."
               class="text-input">
       </textarea>
+            <button (click)="clearText()" class="clear-btn">Очистити</button>
         </div>
 
         <div class="stats-section">
@@ -19,11 +20,17 @@
                 <div class="stat-card">
                     <div class="stat-value">{{wordCount}}</div>
                     <div class="stat-label">Слова</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" [style.width.%]="wordProgress"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-value">{{charCount}}</div>
                     <div class="stat-label">Символи</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" [style.width.%]="charProgress"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card">
@@ -34,6 +41,24 @@
                 <div class="stat-card">
                     <div class="stat-value">{{sentenceCount}}</div>
                     <div class="stat-label">Речення</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" [style.width.%]="sentenceProgress"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card readability">
+                    <div class="stat-value">{{readability || '—'}}</div>
+                    <div class="stat-label">Читабельність</div>
+                </div>
+            </div>
+
+            <div class="top-words" *ngIf="topWords.length > 0">
+                <h3>Найчастіші слова</h3>
+                <div class="word-list">
+                    <div class="word-item" *ngFor="let item of topWords">
+                        <span class="word">{{item.word}}</span>
+                        <span class="count">{{item.count}}</span>
+                    </div>
                 </div>
             </div>
         </div>
