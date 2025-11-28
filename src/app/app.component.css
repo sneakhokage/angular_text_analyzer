@@ -26,6 +26,12 @@ header p {
     gap: 20px;
 }
 
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .text-input-section {
     background: white;
     padding: 20px;
@@ -181,11 +187,33 @@ header p {
         grid-template-columns: 1fr;
     }
 
+    .left-section {
+        order: 1;
+    }
+
+    .stats-section {
+        order: 2;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
 
     header h1 {
+        font-size: 2rem;
+    }
+
+    .text-input {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .stat-value {
         font-size: 2rem;
     }
 }

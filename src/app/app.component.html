@@ -5,14 +5,26 @@
     </header>
 
     <div class="main-content">
-        <div class="text-input-section">
-      <textarea
-              [(ngModel)]="text"
-              (input)="analyzeText()"
-              placeholder="Введіть або вставте текст для аналізу..."
-              class="text-input">
-      </textarea>
-            <button (click)="clearText()" class="clear-btn">Очистити</button>
+        <div class="left-section">
+            <div class="text-input-section">
+        <textarea
+                [(ngModel)]="text"
+                (input)="analyzeText()"
+                placeholder="Введіть або вставте текст для аналізу..."
+                class="text-input">
+        </textarea>
+                <button (click)="clearText()" class="clear-btn">Очистити</button>
+            </div>
+
+            <div class="top-words" *ngIf="topWords.length > 0">
+                <h3>Найчастіші слова</h3>
+                <div class="word-list">
+                    <div class="word-item" *ngFor="let item of topWords">
+                        <span class="word">{{item.word}}</span>
+                        <span class="count">{{item.count}}</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="stats-section">
@@ -46,19 +58,14 @@
                     </div>
                 </div>
 
-                <div class="stat-card readability">
-                    <div class="stat-value">{{readability || '—'}}</div>
-                    <div class="stat-label">Читабельність</div>
+                <div class="stat-card">
+                    <div class="stat-value">{{readingTime}} хв</div>
+                    <div class="stat-label">Час читання</div>
                 </div>
-            </div>
 
-            <div class="top-words" *ngIf="topWords.length > 0">
-                <h3>Найчастіші слова</h3>
-                <div class="word-list">
-                    <div class="word-item" *ngFor="let item of topWords">
-                        <span class="word">{{item.word}}</span>
-                        <span class="count">{{item.count}}</span>
-                    </div>
+                <div class="stat-card readability">
+                    <div class="stat-value">{{readability}}</div>
+                    <div class="stat-label">Читабельність</div>
                 </div>
             </div>
         </div>

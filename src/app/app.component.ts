@@ -18,6 +18,7 @@ export class AppComponent {
     sentenceCount: number = 0;
     readability: string = '';
     topWords: WordFrequency[] = [];
+    readingTime: number = 0;
 
     wordProgress: number = 0;
     charProgress: number = 0;
@@ -35,6 +36,7 @@ export class AppComponent {
         this.sentenceCount = this.countSentences();
         this.readability = this.calculateReadability();
         this.topWords = this.getTopWords();
+        this.readingTime = this.calculateReadingTime();
         this.calculateProgress();
     }
 
@@ -79,6 +81,11 @@ export class AppComponent {
             .slice(0, 5);
     }
 
+    private calculateReadingTime(): number {
+        const wordsPerMinute = 200;
+        return Math.ceil(this.wordCount / wordsPerMinute);
+    }
+
     private calculateProgress(): void {
         this.wordProgress = Math.min((this.wordCount / 500) * 100, 100);
         this.charProgress = Math.min((this.charCount / 3000) * 100, 100);
@@ -92,6 +99,7 @@ export class AppComponent {
         this.sentenceCount = 0;
         this.readability = '';
         this.topWords = [];
+        this.readingTime = 0;
         this.wordProgress = 0;
         this.charProgress = 0;
         this.sentenceProgress = 0;
