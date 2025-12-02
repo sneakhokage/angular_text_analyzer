@@ -1,3 +1,14 @@
+.app-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    transition: background 0.3s ease;
+}
+
+.app-wrapper.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -7,6 +18,43 @@ header {
     text-align: center;
     color: white;
     margin-bottom: 30px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-btn,
+.compare-btn {
+    padding: 10px 20px;
+    border: 2px solid white;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.theme-btn:hover,
+.compare-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.compare-btn.active {
+    background: rgba(255,71,87,0.3);
+    border-color: #ff4757;
 }
 
 header h1 {
@@ -58,22 +106,46 @@ header p {
     border-color: #667eea;
 }
 
-.clear-btn {
+.button-group {
     margin-top: 15px;
-    padding: 12px 24px;
-    background: #ff4757;
-    color: white;
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.3s;
+    color: white;
+}
+
+.clear-btn {
+    background: #ff4757;
 }
 
 .clear-btn:hover {
     background: #ee5a6f;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255,71,87,0.3);
+}
+
+.remove-para-btn {
+    background: #00d2d3;
+}
+
+.remove-para-btn:hover:not(:disabled) {
+    background: #01a3a4;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,210,211,0.3);
+}
+
+.remove-para-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .stats-section {
@@ -103,6 +175,33 @@ header p {
 
 .stat-card.readability {
     grid-column: 1 / -1;
+}
+
+.download-card {
+    cursor: pointer;
+    background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+}
+
+.download-card .stat-value {
+    color: white;
+}
+
+.download-card .stat-label {
+    color: rgba(255,255,255,0.9);
+}
+
+.download-card:hover:not(.disabled) {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(95,39,205,0.4);
+}
+
+.download-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.download-card.disabled:hover {
+    transform: none;
 }
 
 .stat-value {
@@ -182,17 +281,144 @@ header p {
     font-weight: bold;
 }
 
+.compare-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.compare-texts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.text-column h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.compare-stats {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.compare-stats h3 {
+    color: #667eea;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.comparison-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comparison-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comparison-label {
+    font-size: 1rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.comparison-values {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.comparison-values .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #667eea;
+    flex: 1;
+    text-align: center;
+}
+
+.comparison-values .diff {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    flex: 0.5;
+    text-align: center;
+}
+
+.diff.positive {
+    background: #d4edda;
+    color: #155724;
+}
+
+.diff.negative {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.diff.neutral {
+    background: #e0e0e0;
+    color: #666;
+}
+
+.dark-theme .text-input-section,
+.dark-theme .stat-card,
+.dark-theme .top-words,
+.dark-theme .compare-stats {
+    background: #2d3748;
+    color: white;
+}
+
+.dark-theme .text-input {
+    background: #1a202c;
+    color: white;
+    border-color: #4a5568;
+}
+
+.dark-theme .stat-label,
+.dark-theme .comparison-label {
+    color: #cbd5e0;
+}
+
+.dark-theme .word-item,
+.dark-theme .comparison-values {
+    background: #1a202c;
+}
+
+.dark-theme .word {
+    color: white;
+}
+
+.dark-theme .progress-bar {
+    background: #1a202c;
+}
+
+.dark-theme .text-column h3 {
+    color: white;
+}
+
 @media (max-width: 768px) {
-    .main-content {
+    .main-content,
+    .compare-texts {
         grid-template-columns: 1fr;
     }
 
-    .left-section {
-        order: 1;
-    }
-
-    .stats-section {
-        order: 2;
+    .header-content {
+        flex-direction: column;
     }
 
     .stats-grid {

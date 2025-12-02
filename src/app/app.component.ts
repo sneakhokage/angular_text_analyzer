@@ -5,55 +5,104 @@ interface WordFrequency {
     count: number;
 }
 
+interface TextStats {
+    wordCount: number;
+    charCount: number;
+    charCountNoSpaces: number;
+    sentenceCount: number;
+    readability: string;
+    topWords: WordFrequency[];
+    readingTime: number;
+    wordProgress: number;
+    charProgress: number;
+    sentenceProgress: number;
+}
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+    isDarkTheme: boolean = false;
+    isCompareMode: boolean = false;
+
     text: string = '';
-    wordCount: number = 0;
-    charCount: number = 0;
-    charCountNoSpaces: number = 0;
-    sentenceCount: number = 0;
-    readability: string = '';
-    topWords: WordFrequency[] = [];
-    readingTime: number = 0;
+    text2: string = '';
 
-    wordProgress: number = 0;
-    charProgress: number = 0;
-    sentenceProgress: number = 0;
+    stats1: TextStats = this.getEmptyStats();
+    stats2: TextStats = this.getEmptyStats();
 
-    analyzeText(): void {
-        if (!this.text.trim()) {
-            this.resetStats();
-            return;
+    ngOnInit(): void {
+        const savedTheme = localStorage.getItem('theme');
+        this.isDarkTheme = savedTheme === 'dark';
+    }
+
+    toggleTheme(): void {
+        this.isDarkTheme = !this.isDarkTheme;
+        localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+    }
+
+    toggleCompareMode(): void {
+        this.isCompareMode = !this.isCompareMode;
+        if (!this.isCompareMode) {
+            this.text2 = '';
+            this.stats2 = this.getEmptyStats();
+        }
+    }
+
+    analyzeText1(): void {
+        this.stats1 = this.analyze(this.text);
+    }
+
+    analyzeText2(): void {
+        this.stats2 = this.analyze(this.text2);
+    }
+
+    private analyze(text: string): TextStats {
+        if (!text.trim()) {
+            return this.getEmptyStats();
         }
 
-        this.wordCount = this.countWords();
-        this.charCount = this.text.length;
-        this.charCountNoSpaces = this.text.replace(/\s/g, '').length;
-        this.sentenceCount = this.countSentences();
-        this.readability = this.calculateReadability();
-        this.topWords = this.getTopWords();
-        this.readingTime = this.calculateReadingTime();
-        this.calculateProgress();
+        const wordCount = this.countWords(text);
+        const charCount = text.length;
+        const charCountNoSpaces = text.replace(/\s/g, '').length;
+        const sentenceCount = this.countSentences(text);
+        const readability = this.calculateReadability(wordCount, charCountNoSpaces, sentenceCount);
+        const topWords = this.getTopWords(text);
+        const readingTime = this.calculateReadingTime(wordCount);
+        const wordProgress = Math.min((wordCount / 500) * 100, 100);
+        const charProgress = Math.min((charCount / 3000) * 100, 100);
+        const sentenceProgress = Math.min((sentenceCount / 30) * 100, 100);
+
+        return {
+            wordCount,
+            charCount,
+            charCountNoSpaces,
+            sentenceCount,
+            readability,
+            topWords,
+            readingTime,
+            wordProgress,
+            charProgress,
+            sentenceProgress
+        };
     }
 
-    private countWords(): number {
-        return this.text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    private countWords(text: string): number {
+        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
     }
 
-    private countSentences(): number {
-        const sentences = this.text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    private countSentences(text: string): number {
+        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
         return sentences.length;
     }
 
-    private calculateReadability(): string {
-        if (this.wordCount === 0 || this.sentenceCount === 0) return 'Невідомо';
+    private calculateReadability(wordCount: number, charCountNoSpaces: number, sentenceCount: number): string {
+        if (wordCount === 0 || sentenceCount === 0) return 'Невідомо';
 
-        const avgWordsPerSentence = this.wordCount / this.sentenceCount;
-        const avgCharsPerWord = this.charCountNoSpaces / this.wordCount;
+        const avgWordsPerSentence = wordCount / sentenceCount;
+        const avgCharsPerWord = charCountNoSpaces / wordCount;
 
         if (avgWordsPerSentence < 15 && avgCharsPerWord < 5) {
             return 'Легко';
@@ -64,8 +113,8 @@ export class AppComponent {
         }
     }
 
-    private getTopWords(): WordFrequency[] {
-        const words = this.text.toLowerCase()
+    private getTopWords(text: string): WordFrequency[] {
+        const words = text.toLowerCase()
             .replace(/[^\wа-яієїґ\s]/gi, '')
             .split(/\s+/)
             .filter(word => word.length > 2);
@@ -81,32 +130,67 @@ export class AppComponent {
             .slice(0, 5);
     }
 
-    private calculateReadingTime(): number {
+    private calculateReadingTime(wordCount: number): number {
         const wordsPerMinute = 200;
-        return Math.ceil(this.wordCount / wordsPerMinute);
+        return Math.ceil(wordCount / wordsPerMinute);
     }
 
-    private calculateProgress(): void {
-        this.wordProgress = Math.min((this.wordCount / 500) * 100, 100);
-        this.charProgress = Math.min((this.charCount / 3000) * 100, 100);
-        this.sentenceProgress = Math.min((this.sentenceCount / 30) * 100, 100);
-    }
-
-    private resetStats(): void {
-        this.wordCount = 0;
-        this.charCount = 0;
-        this.charCountNoSpaces = 0;
-        this.sentenceCount = 0;
-        this.readability = '';
-        this.topWords = [];
-        this.readingTime = 0;
-        this.wordProgress = 0;
-        this.charProgress = 0;
-        this.sentenceProgress = 0;
+    private getEmptyStats(): TextStats {
+        return {
+            wordCount: 0,
+            charCount: 0,
+            charCountNoSpaces: 0,
+            sentenceCount: 0,
+            readability: '',
+            topWords: [],
+            readingTime: 0,
+            wordProgress: 0,
+            charProgress: 0,
+            sentenceProgress: 0
+        };
     }
 
     clearText(): void {
         this.text = '';
-        this.resetStats();
+        this.stats1 = this.getEmptyStats();
+    }
+
+    clearText2(): void {
+        this.text2 = '';
+        this.stats2 = this.getEmptyStats();
+    }
+
+    downloadText(): void {
+        if (!this.text.trim()) return;
+
+        const blob = new Blob([this.text], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'text-analyzer-export.txt';
+        link.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    removeParagraphs(): void {
+        this.text = this.text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+        this.analyzeText1();
+    }
+
+    removeParagraphs2(): void {
+        this.text2 = this.text2.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+        this.analyzeText2();
+    }
+
+    getDifference(val1: number, val2: number): string {
+        const diff = val1 - val2;
+        if (diff === 0) return '0';
+        return diff > 0 ? `+${diff}` : `${diff}`;
+    }
+
+    getDifferenceClass(val1: number, val2: number): string {
+        const diff = val1 - val2;
+        if (diff === 0) return 'neutral';
+        return diff > 0 ? 'positive' : 'negative';
     }
 }
