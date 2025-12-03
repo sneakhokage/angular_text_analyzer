@@ -2,7 +2,7 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <div>
+                <div class="header-info">
                     <h1>Текстовий аналізатор</h1>
                     <p>Вставте текст для аналізу</p>
                 </div>
@@ -26,9 +26,31 @@
                   placeholder="Введіть або вставте текст для аналізу..."
                   class="text-input">
           </textarea>
+
+                    <div class="tools-bar">
+                        <button (click)="undo()" title="Повернути назад" [disabled]="textHistory.length === 0">↩️ Назад</button>
+                        <button (click)="transformUpperCase()" title="Всі великі" [disabled]="!text.trim()">AA</button>
+                        <button (click)="transformLowerCase()" title="Всі малі" [disabled]="!text.trim()">aa</button>
+                        <button (click)="transformTranslit()" title="Транслітерація" [disabled]="!text.trim()">A-Z</button>
+                        <button (click)="removeExtraSpaces()" title="Прибрати зайві пробіли" [disabled]="!text.trim()">_ _</button>
+                    </div>
+
                     <div class="button-group">
                         <button (click)="clearText()" class="action-btn clear-btn">Очистити</button>
-                        <button (click)="removeParagraphs()" class="action-btn remove-para-btn" [disabled]="!text.trim()">Прибрати абзаци</button>
+                        <button (click)="saveToHistory()" class="action-btn save-btn" [disabled]="!text.trim()">💾 Зберегти</button>
+                    </div>
+                </div>
+
+                <div class="history-section top-words" *ngIf="history.length > 0">
+                    <h3>Історія перевірок</h3>
+                    <div class="word-list">
+                        <div class="history-item" *ngFor="let item of history; let i = index" (click)="loadHistoryItem(item)">
+                            <div class="history-info">
+                                <span class="history-preview">{{item.preview}}</span>
+                                <span class="history-meta">{{item.stats.wordCount}} слів • {{item.date | date:'shortTime'}}</span>
+                            </div>
+                            <button class="delete-btn" (click)="deleteHistoryItem(i, $event)">✕</button>
+                        </div>
                     </div>
                 </div>
 
@@ -84,6 +106,11 @@
                         <div class="stat-label">Скачати</div>
                     </div>
 
+                    <div class="stat-card pdf-card" (click)="downloadPdf()" [class.disabled]="!text.trim()">
+                        <div class="stat-value">PDF</div>
+                        <div class="stat-label">Завантажити звіт</div>
+                    </div>
+
                     <div class="stat-card readability">
                         <div class="stat-value">{{stats1.readability}}</div>
                         <div class="stat-label">Читабельність</div>
@@ -104,7 +131,7 @@
           </textarea>
                     <div class="button-group">
                         <button (click)="clearText()" class="action-btn clear-btn">Очистити</button>
-                        <button (click)="removeParagraphs()" class="action-btn remove-para-btn" [disabled]="!text.trim()">Прибрати абзаци</button>
+                        <button (click)="removeExtraSpaces()" class="action-btn remove-para-btn" [disabled]="!text.trim()">Без пробілів</button>
                     </div>
                 </div>
 
@@ -118,7 +145,6 @@
           </textarea>
                     <div class="button-group">
                         <button (click)="clearText2()" class="action-btn clear-btn">Очистити</button>
-                        <button (click)="removeParagraphs2()" class="action-btn remove-para-btn" [disabled]="!text2.trim()">Прибрати абзаци</button>
                     </div>
                 </div>
             </div>

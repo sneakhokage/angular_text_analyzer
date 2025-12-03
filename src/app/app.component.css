@@ -22,10 +22,17 @@ header {
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
     gap: 20px;
+}
+
+.header-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .header-controls {
@@ -112,6 +119,36 @@ header p {
     gap: 10px;
 }
 
+.tools-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.tools-bar button {
+    padding: 6px 12px;
+    background: #f0f2f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    transition: all 0.2s;
+}
+
+.tools-bar button:hover:not(:disabled) {
+    background: #e2e8f0;
+    color: #667eea;
+}
+
+.tools-bar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .action-btn {
     flex: 1;
     padding: 10px 20px;
@@ -144,6 +181,21 @@ header p {
 }
 
 .remove-para-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.save-btn {
+    background: #6c5ce7;
+}
+
+.save-btn:hover:not(:disabled) {
+    background: #5649c0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+}
+
+.save-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -195,13 +247,28 @@ header p {
     box-shadow: 0 15px 40px rgba(95,39,205,0.4);
 }
 
-.download-card.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.pdf-card {
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff9f43 0%, #ee5253 100%);
+    grid-column: 1 / -1;
 }
 
-.download-card.disabled:hover {
-    transform: none;
+.pdf-card .stat-value {
+    color: white;
+}
+
+.pdf-card .stat-label {
+    color: rgba(255,255,255,0.9);
+}
+
+.pdf-card:hover:not(.disabled) {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(238, 82, 83, 0.4);
+}
+
+.download-card.disabled, .pdf-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .stat-value {
@@ -375,6 +442,55 @@ header p {
     color: #666;
 }
 
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+}
+
+.history-item:hover {
+    background: #e8e8e8;
+    border-left: 4px solid #6c5ce7;
+    transform: translateX(2px);
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.history-preview {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.history-meta {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.delete-btn:hover {
+    color: #ff4757;
+}
+
 .dark-theme .text-input-section,
 .dark-theme .stat-card,
 .dark-theme .top-words,
@@ -395,12 +511,22 @@ header p {
 }
 
 .dark-theme .word-item,
-.dark-theme .comparison-values {
+.dark-theme .comparison-values,
+.dark-theme .history-item {
     background: #1a202c;
 }
 
-.dark-theme .word {
+.dark-theme .history-item:hover {
+    background: #2d3748;
+}
+
+.dark-theme .word,
+.dark-theme .history-preview {
     color: white;
+}
+
+.dark-theme .history-meta {
+    color: #a0aec0;
 }
 
 .dark-theme .progress-bar {
@@ -409,6 +535,20 @@ header p {
 
 .dark-theme .text-column h3 {
     color: white;
+}
+
+.dark-theme .tools-bar {
+    border-top: 1px solid #4a5568;
+}
+
+.dark-theme .tools-bar button {
+    background: #4a5568;
+    border-color: #2d3748;
+    color: #e2e8f0;
+}
+
+.dark-theme .tools-bar button:hover:not(:disabled) {
+    background: #718096;
 }
 
 @media (max-width: 768px) {
