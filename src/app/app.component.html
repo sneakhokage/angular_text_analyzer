@@ -1,0 +1,211 @@
+<div class="app-wrapper" [class.dark-theme]="isDarkTheme">
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>Текстовий аналізатор</h1>
+                    <p>Вставте текст для аналізу</p>
+                </div>
+                <div class="header-controls">
+                    <button (click)="toggleTheme()" class="theme-btn">
+                        {{ isDarkTheme ? '☀️ Світла' : '🌙 Темна' }}
+                    </button>
+                    <button (click)="toggleCompareMode()" class="compare-btn" [class.active]="isCompareMode">
+                        {{ isCompareMode ? '✕ Вийти з порівняння' : '⚖️ Порівняти тексти' }}
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content" *ngIf="!isCompareMode">
+            <div class="left-section">
+                <div class="text-input-section">
+          <textarea
+                  [(ngModel)]="text"
+                  (input)="analyzeText1()"
+                  placeholder="Введіть або вставте текст для аналізу..."
+                  class="text-input">
+          </textarea>
+
+                    <div class="tools-bar">
+                        <button (click)="undo()" title="Повернути назад" [disabled]="textHistory.length === 0">↩️ Назад</button>
+                        <button (click)="transformUpperCase()" title="Всі великі" [disabled]="!text.trim()">AA</button>
+                        <button (click)="transformLowerCase()" title="Всі малі" [disabled]="!text.trim()">aa</button>
+                        <button (click)="transformTranslit()" title="Транслітерація" [disabled]="!text.trim()">A-Z</button>
+                        <button (click)="removeExtraSpaces()" title="Прибрати зайві пробіли" [disabled]="!text.trim()">_ _</button>
+                    </div>
+
+                    <div class="button-group">
+                        <button (click)="clearText()" class="action-btn clear-btn">Очистити</button>
+                        <button (click)="saveToHistory()" class="action-btn save-btn" [disabled]="!text.trim()">💾 Зберегти</button>
+                    </div>
+                </div>
+
+                <div class="history-section top-words" *ngIf="history.length > 0">
+                    <h3>Історія перевірок</h3>
+                    <div class="word-list">
+                        <div class="history-item" *ngFor="let item of history; let i = index" (click)="loadHistoryItem(item)">
+                            <div class="history-info">
+                                <span class="history-preview">{{item.preview}}</span>
+                                <span class="history-meta">{{item.stats.wordCount}} слів • {{item.date | date:'shortTime'}}</span>
+                            </div>
+                            <button class="delete-btn" (click)="deleteHistoryItem(i, $event)">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top-words" *ngIf="stats1.topWords.length > 0">
+                    <h3>Найчастіші слова</h3>
+                    <div class="word-list">
+                        <div class="word-item" *ngFor="let item of stats1.topWords">
+                            <span class="word">{{item.word}}</span>
+                            <span class="count">{{item.count}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{stats1.wordCount}}</div>
+                        <div class="stat-label">Слова</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="stats1.wordProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">{{stats1.charCount}}</div>
+                        <div class="stat-label">Символи</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="stats1.charProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">{{stats1.charCountNoSpaces}}</div>
+                        <div class="stat-label">Без пробілів</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">{{stats1.sentenceCount}}</div>
+                        <div class="stat-label">Речення</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="stats1.sentenceProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">{{stats1.readingTime}} хв</div>
+                        <div class="stat-label">Час читання</div>
+                    </div>
+
+                    <div class="stat-card download-card" (click)="downloadText()" [class.disabled]="!text.trim()">
+                        <div class="stat-value">TXT</div>
+                        <div class="stat-label">Скачати</div>
+                    </div>
+
+                    <div class="stat-card pdf-card" (click)="downloadPdf()" [class.disabled]="!text.trim()">
+                        <div class="stat-value">PDF</div>
+                        <div class="stat-label">Завантажити звіт</div>
+                    </div>
+
+                    <div class="stat-card readability">
+                        <div class="stat-value">{{stats1.readability}}</div>
+                        <div class="stat-label">Читабельність</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="compare-mode" *ngIf="isCompareMode">
+            <div class="compare-texts">
+                <div class="text-column">
+                    <h3>Текст 1</h3>
+                    <textarea
+                            [(ngModel)]="text"
+                            (input)="analyzeText1()"
+                            placeholder="Введіть перший текст..."
+                            class="text-input">
+          </textarea>
+                    <div class="button-group">
+                        <button (click)="clearText()" class="action-btn clear-btn">Очистити</button>
+                        <button (click)="removeExtraSpaces()" class="action-btn remove-para-btn" [disabled]="!text.trim()">Без пробілів</button>
+                    </div>
+                </div>
+
+                <div class="text-column">
+                    <h3>Текст 2</h3>
+                    <textarea
+                            [(ngModel)]="text2"
+                            (input)="analyzeText2()"
+                            placeholder="Введіть другий текст..."
+                            class="text-input">
+          </textarea>
+                    <div class="button-group">
+                        <button (click)="clearText2()" class="action-btn clear-btn">Очистити</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compare-stats">
+                <h3>Порівняння статистики</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label">Слова</div>
+                        <div class="comparison-values">
+                            <span class="value">{{stats1.wordCount}}</span>
+                            <span class="diff" [class]="getDifferenceClass(stats1.wordCount, stats2.wordCount)">
+                {{getDifference(stats1.wordCount, stats2.wordCount)}}
+              </span>
+                            <span class="value">{{stats2.wordCount}}</span>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-label">Символи</div>
+                        <div class="comparison-values">
+                            <span class="value">{{stats1.charCount}}</span>
+                            <span class="diff" [class]="getDifferenceClass(stats1.charCount, stats2.charCount)">
+                {{getDifference(stats1.charCount, stats2.charCount)}}
+              </span>
+                            <span class="value">{{stats2.charCount}}</span>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-label">Речення</div>
+                        <div class="comparison-values">
+                            <span class="value">{{stats1.sentenceCount}}</span>
+                            <span class="diff" [class]="getDifferenceClass(stats1.sentenceCount, stats2.sentenceCount)">
+                {{getDifference(stats1.sentenceCount, stats2.sentenceCount)}}
+              </span>
+                            <span class="value">{{stats2.sentenceCount}}</span>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-label">Час читання</div>
+                        <div class="comparison-values">
+                            <span class="value">{{stats1.readingTime}} хв</span>
+                            <span class="diff" [class]="getDifferenceClass(stats1.readingTime, stats2.readingTime)">
+                {{getDifference(stats1.readingTime, stats2.readingTime)}}
+              </span>
+                            <span class="value">{{stats2.readingTime}} хв</span>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-label">Читабельність</div>
+                        <div class="comparison-values">
+                            <span class="value">{{stats1.readability}}</span>
+                            <span class="diff neutral">vs</span>
+                            <span class="value">{{stats2.readability}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
